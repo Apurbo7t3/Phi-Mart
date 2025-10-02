@@ -42,6 +42,7 @@ urlpatterns = [
     path('auth/',include('djoser.urls')),
     path('auth/',include('djoser.urls.jwt')),
     path('api/', include('api.urls')),
+    path('', include('api.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]+ debug_toolbar_urls()
 
