@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
+import cloudinary
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,12 +25,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vercel.app','127.0.0.1']
 
 AUTH_USER_MODEL='users.User'
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE= "whitenoise.storage.CompressedStaticFilesStorage"
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    "whitenoise.runserver_nostatic",
     'django.contrib.staticfiles',
     'rest_framework',
     'djoser',
@@ -53,6 +58,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -85,7 +91,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'phi_mart.wsgi.application'
+WSGI_APPLICATION = 'phi_mart.wsgi.app'
 
 
 # Database
@@ -98,6 +104,9 @@ WSGI_APPLICATION = 'phi_mart.wsgi.application'
 #     }
 # }
 
+MEDIA_URL='/media/'
+MEDIA_ROOT= BASE_DIR / 'media'
+DEFAULT_FILE_STORAGE='cloudinary_storage.storage.MediaCloudinaryStorage'
 
 DATABASES = {
     'default': {
@@ -181,3 +190,10 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+cloudinary.config(
+cloud_name = config('cloud_name'),
+api_key = config('api_key'),
+api_secret = config("api_secret"),
+secure=True
+)
